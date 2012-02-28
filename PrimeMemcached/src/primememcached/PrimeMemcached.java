@@ -14,10 +14,12 @@ import postgreswork.PostgresWork;
  * @author me
  */
 public class PrimeMemcached {
+    private static PostgresWork pWork;
+    
     private static ArrayList getQueries()
     {
         ArrayList<String> queries = new ArrayList();
-        ArrayList results = PostgresWork.getPWorkObject(true).runQuery("SELECT DISTINCT ticker FROM info");
+        ArrayList results = pWork.runQuery("SELECT DISTINCT ticker FROM info");
         
         String ticker = "";
         for(int x = 0; x < results.size(); x++)
@@ -33,6 +35,7 @@ public class PrimeMemcached {
             queries.add("SELECT interval_end FROM thirtymin_interval WHERE ticker = '" + ticker + "' ORDER BY interval_end ASC");
             queries.add("SELECT interval_end FROM day_interval WHERE ticker = '" + ticker + "' ORDER BY interval_end ASC");
 
+            
             //queries for strategy execution
         }
 
@@ -43,13 +46,15 @@ public class PrimeMemcached {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ArrayList<String> queries = getQueries();
+        pWork = PostgresWork.getPWorkObject(true);
 
-        PostgresWork.getPWorkObject(true).flushMemcache();
+        ArrayList<String> queries = getQueries();
+                
+        pWork.flushMemcache();
         
         for(int x=0; x<queries.size();x++)
         {
-            PostgresWork.getPWorkObject(true).primeCache(queries.get(x));
+            pWork.primeCache(queries.get(x));
         }
         
         System.exit(0);

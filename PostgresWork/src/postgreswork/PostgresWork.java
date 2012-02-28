@@ -6,19 +6,20 @@ package postgreswork;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import memcachedlib.MemcachedLib;
-import com.jolbox.bonecp.BoneCP;
-import com.jolbox.bonecp.BoneCPConfig;
+//import com.jolbox.bonecp.BoneCP;
+//import com.jolbox.bonecp.BoneCPConfig;
+import org.postgresql.jdbc3.Jdbc3PoolingDataSource;
 
 /**
  *
  * @author me
  */
 public class PostgresWork {
-    //private Jdbc3PoolingDataSource conSource;
-    private BoneCP connectionPool = null;
+    private Jdbc3PoolingDataSource conSource;
+    
+    
+    //private BoneCP connectionPool = null;
     private MemcachedLib mclib;
     private static PostgresWork pWork;
     private boolean enable_cache;
@@ -32,7 +33,7 @@ public class PostgresWork {
             this.mclib = MemcachedLib.getMemcachedObject();
         }
         
-        try {
+     /*   try {
             // load the database driver (make sure this is in your classpath!)
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
@@ -54,14 +55,15 @@ public class PostgresWork {
         } catch (SQLException ex) {
             Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
         }
-/*
+*/
+        
 this.conSource = new Jdbc3PoolingDataSource();
 this.conSource.setServerName("192.168.1.104:5432");
 this.conSource.setDatabaseName("stocks");
 this.conSource.setUser("postgres");
 this.conSource.setPassword("pUL8K6qjPzJQ9nTYwY9D");
 this.conSource.setMaxConnections(5);
-*/
+
     }
 
     public static synchronized PostgresWork getPWorkObject(boolean use_cac)
@@ -93,7 +95,7 @@ this.conSource.setMaxConnections(5);
         Connection con = null;
         
         try {
-            con = this.connectionPool.getConnection();
+            con = this.conSource.getConnection();
             
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
@@ -152,6 +154,7 @@ this.conSource.setMaxConnections(5);
         }
         */
 
+        
         return results;
     }
     
@@ -173,8 +176,10 @@ this.conSource.setMaxConnections(5);
     public void primeCache(String query)
     {
         //cache for a day
-        if(this.enable_cache)
+        if(this.enable_cache)   
+        {
             this.mclib.setVal(query, 86400, this.runQuery(query));
+        }
     }
     
     /**
@@ -194,7 +199,7 @@ this.conSource.setMaxConnections(5);
         Connection con = null;
         
         try {
-            con = this.connectionPool.getConnection();
+            con = this.conSource.getConnection();
             
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
@@ -238,7 +243,7 @@ this.conSource.setMaxConnections(5);
         Connection con = null;
         
         try {
-            con = this.connectionPool.getConnection();
+            con = this.conSource.getConnection();
 
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(query);
@@ -263,10 +268,7 @@ this.conSource.setMaxConnections(5);
         }        
     }
     
-    public void shutdownPool()
-    {
-        this.connectionPool.shutdown();
-    }
+   
     
     @Override
     public Object clone() throws CloneNotSupportedException
