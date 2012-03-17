@@ -39,6 +39,8 @@ public class PrimeMemcached {
             //queries for strategy execution
         }
 
+        queries.add("SELECT DISTINCT ticker FROM info");
+        
         return queries;
     }
     
