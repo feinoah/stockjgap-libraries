@@ -4,14 +4,8 @@
  */
 package postgreswork;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import memcachedlib.MemcachedLib;
 //import com.jolbox.bonecp.BoneCP;
 //import com.jolbox.bonecp.BoneCPConfig;
@@ -69,7 +63,6 @@ this.conSource.setDatabaseName("stocks");
 this.conSource.setUser("postgres");
 this.conSource.setPassword("pUL8K6qjPzJQ9nTYwY9D");
 this.conSource.setMaxConnections(5);
-
     }
 
     public static synchronized PostgresWork getPWorkObject(boolean use_cac)
@@ -243,86 +236,6 @@ this.conSource.setMaxConnections(5);
             }
         }        
     }    
-    
-    /**
-     * This function is used in StreamerScraper
-     * 
-     * @return
-     * @throws SQLException
-     */
-    public void historicalInsert(String query) throws SQLException
-    {
-        Connection con = null;
-
-        try {
-            con = this.conSource.getConnection();
-
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(query);
-
-            rs.close();
-            st.close();
-        }
-        catch(SQLException e)   {
-            if(!e.toString().contains("No results were returned by the query"))  {
-                BufferedWriter out;
-                try {
-                    Calendar x = Calendar.getInstance();
-                    String d = x.get(Calendar.YEAR) + "-" + (x.get(Calendar.MONTH) + 1) + "-" + x.get(Calendar.DAY_OF_MONTH)
-                            + "_" + x.get(Calendar.HOUR_OF_DAY) + "-" + x.get(Calendar.MINUTE) + "-" + x.get(Calendar.SECOND);
-                    out = new BufferedWriter(new FileWriter("C:\\postgres_backups\\errors\\" + d + ".txt", true));
-
-                    out.write("ERROR:");
-                    out.newLine();
-                    out.write(e.toString());
-                    out.newLine();
-                    out.write("QUERY:");
-                    out.newLine();
-                    out.write(query);
-                    out.newLine();
-                    out.newLine();
-                    out.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        finally
-        {
-            if(con != null)
-            {
-                try
-                {
-                    con.close();
-                }
-                catch (SQLException e)
-                {
-                    BufferedWriter out;
-                    try {
-                        Calendar x = Calendar.getInstance();
-                        String d = x.get(Calendar.YEAR) + "-" + (x.get(Calendar.MONTH) + 1) + "-" + x.get(Calendar.DAY_OF_MONTH)
-                                + "_" + x.get(Calendar.HOUR_OF_DAY) + "-" + x.get(Calendar.MINUTE) + "-" + x.get(Calendar.SECOND);
-                        out = new BufferedWriter(new FileWriter("C:\\postgres_backups\\errors\\" + d + ".txt", true));
-
-                        out.write("ERROR:");
-                        out.newLine();
-                        out.write(e.toString());
-                        out.newLine();
-                        out.write("QUERY:");
-                        out.newLine();
-                        out.write(query);
-                        out.newLine();
-                        out.newLine();
-                        out.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }        
-    }
-    
-   
     
     @Override
     public Object clone() throws CloneNotSupportedException
