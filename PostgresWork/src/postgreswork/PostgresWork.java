@@ -6,20 +6,16 @@ package postgreswork;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import memcachedlib.MemcachedLib;
-//import com.jolbox.bonecp.BoneCP;
-//import com.jolbox.bonecp.BoneCPConfig;
-import org.postgresql.jdbc3.Jdbc3PoolingDataSource;
 
 /**
  *
  * @author me
  */
 public class PostgresWork {
-    private Jdbc3PoolingDataSource conSource;
-    
-    
-    //private BoneCP connectionPool = null;
+    private Connection conSource;
     private MemcachedLib mclib;
     private static PostgresWork pWork;
     private boolean enable_cache;
@@ -33,36 +29,17 @@ public class PostgresWork {
             this.mclib = MemcachedLib.getMemcachedObject();
         }
         
-     /*   try {
-            // load the database driver (make sure this is in your classpath!)
-            Class.forName("org.postgresql.Driver");
-        } catch (Exception e) {
-            System.out.println(e);
-            
-            return;
-        }
-
-        BoneCPConfig config = new BoneCPConfig();
-        config.setJdbcUrl("jdbc:postgresql://192.168.1.104:5432/stocks"); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
-        config.setUsername("postgres"); 
-        config.setPassword("pUL8K6qjPzJQ9nTYwY9D");
-        config.setMinConnectionsPerPartition(5);
-        config.setMaxConnectionsPerPartition(10);
-        config.setPartitionCount(1);
-
         try {
-            this.connectionPool = new BoneCP(config); // setup the connection pool
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            this.conSource = DriverManager.getConnection("jdbc:postgresql://192.168.1.104:6432/stocks_pool?user=testuser&password=testpass");
         } catch (SQLException ex) {
             Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
         }
-*/
-        
-this.conSource = new Jdbc3PoolingDataSource();
-this.conSource.setServerName("192.168.1.104:5432");
-this.conSource.setDatabaseName("stocks");
-this.conSource.setUser("postgres");
-this.conSource.setPassword("pUL8K6qjPzJQ9nTYwY9D");
-this.conSource.setMaxConnections(5);
     }
 
     public static synchronized PostgresWork getPWorkObject(boolean use_cac)
@@ -91,12 +68,9 @@ this.conSource.setMaxConnections(5);
         }
         
         ArrayList results = new ArrayList();
-        Connection con = null;
         
         try {
-            con = this.conSource.getConnection();
-            
-            Statement st = con.createStatement();
+            Statement st = this.conSource.createStatement();
             ResultSet rs = st.executeQuery(query);
 
             while(rs.next())   {
@@ -125,25 +99,10 @@ this.conSource.setMaxConnections(5);
             st.close();
         }
         catch(SQLException e)   {
+            System.out.println("CON: " + this.conSource);
             System.out.println("There was a problem creating the connection:  " + e.toString() + " : "  + e.getErrorCode());
             System.out.println("QUERY:");
             System.out.println(query);
-        }
-        finally
-        {
-            if(con != null)
-            {
-                try
-                {
-                    con.close();
-                }
-                catch (SQLException e)
-                {
-                    System.out.println("There was a problem closing the connection:  " + e.toString() + " : "  + e.getErrorCode());
-                    System.out.println("QUERY:");
-                    System.out.println(query);
-                }
-            }
         }
 
 
@@ -199,12 +158,8 @@ this.conSource.setMaxConnections(5);
      */
     public void insertQuery(String query)
     {
-        Connection con = null;
-        
         try {
-            con = this.conSource.getConnection();
-            
-            Statement st = con.createStatement();
+            Statement st = this.conSource.createStatement();
             ResultSet rs = st.executeQuery(query);
             
             rs.close();
@@ -218,23 +173,6 @@ this.conSource.setMaxConnections(5);
                 System.out.println(query);
             }
         }
-        finally
-        {
-            if(con != null)
-            {
-                try
-                {
-                    con.close();
-                }
-                catch (SQLException e)
-                {
-                    System.out.println("ERROR:");
-                    System.out.println(e.toString());
-                    System.out.println("QUERY:");
-                    System.out.println(query);
-                }
-            }
-        }        
     }    
     
     @Override
