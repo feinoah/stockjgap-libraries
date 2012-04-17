@@ -56,7 +56,6 @@ public class PostgresWork {
      */
     public ArrayList runQuery(String query, boolean cached)
     {
-        //System.out.println(query);
         if(cached && this.enable_cache)
         {
             Object resMem = this.mclib.getVal(query);
@@ -79,13 +78,14 @@ public class PostgresWork {
                 int noCols = res.getColumnCount();
 
                 ArrayList tempList = new ArrayList();
-
+                
                 for(int x = 1; x <= noCols; x++) {
                     if(res.isSearchable(x)) {
                         ArrayList col = new ArrayList();
 
                         String cName = res.getColumnName(x);
                         Object obj = rs.getObject(cName);
+
                         col.add(cName);
                         col.add(obj);
                         tempList.add(col);
