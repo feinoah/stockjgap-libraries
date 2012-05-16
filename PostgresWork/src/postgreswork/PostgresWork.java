@@ -138,7 +138,7 @@ public class PostgresWork {
     public void primeCache(String query)
     {
         //cache for a day
-        if(this.enable_cache)   
+        if(this.enable_cache)
         {
             this.mclib.setVal(query, 86400, this.runQuery(query));
         }

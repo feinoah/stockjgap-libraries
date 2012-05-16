@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.spy.memcached.MemcachedClient;
@@ -66,11 +70,21 @@ public class MemcachedLib {
     public Object getVal(String key)
     {
         try {
-            return this.mc.get(this.toMD5(key));
+            Future<Object> item = this.mc.asyncGet(this.toMD5(key));
+            
+            try {
+                return item.get(1, TimeUnit.SECONDS);
+            } catch (TimeoutException e)  {
+                item.cancel(false);
+            } catch (java.lang.InterruptedException e)  {
+                item.cancel(false);
+            } catch (java.util.concurrent.ExecutionException e) {
+                item.cancel(false);
+            }
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(MemcachedLib.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return null;
     }
     
