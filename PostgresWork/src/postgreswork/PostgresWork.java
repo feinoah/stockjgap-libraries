@@ -36,7 +36,7 @@ public class PostgresWork {
         }
         
         try {
-            this.conSource = DriverManager.getConnection("jdbc:postgresql://192.168.1.104:6432/stocks_pool?user=testuser&password=testpass");
+            this.conSource = DriverManager.getConnection("jdbc:postgresql://74.77.200.111:6432/stocks_pool?user=testuser&password=testpass");
         } catch (SQLException ex) {
             Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
         }
