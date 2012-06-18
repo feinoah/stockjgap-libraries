@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -26,7 +25,7 @@ import net.spy.memcached.MemcachedClient;
  * @author me
  */
 public class MemcachedLib {
-    private final String ip_address = "192.168.1.106";
+    private final String ip_address = "74.77.200.111";
     private final int port = 11211;
     private final MemcachedClient mc;
     private static MemcachedLib mlib;
