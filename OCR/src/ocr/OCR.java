@@ -9,10 +9,12 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
-import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -46,19 +48,35 @@ public final class OCR {
     private final BufferedImage eight;
     private final BufferedImage nine;
 
-    private final BufferedImage raw_image;
+    private Rectangle raw_rectangle;
     
+    /**
+     * Use this constructor if you wish to use getText(Rectangle r) later
+     */
+    public OCR()
+    {
+        this(new Rectangle(0, 0, 0, 0));
+    }
+    
+    /**
+     * Sent in coordinates is used to create a new rectangle on the screen to scrape
+     * @param x
+     * @param y
+     * @param width
+     * @param height 
+     */
+    public OCR(int x, int y, int width, int height)
+    {
+        this(new Rectangle(x, y, width, height));
+    }
+    
+    /**
+     * Sent in rectangle is used to scrape from the screen
+     * @param r 
+     */
     public OCR(Rectangle r)
     {
-        BufferedImage slot = null;
-        
-        try {
-            slot = new Robot().createScreenCapture(r);
-        } catch (AWTException ex) {
-            Logger.getLogger(OCR.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        this.raw_image = slot;
+        this.raw_rectangle = r;
         
         BufferedImage period1 = null;
         BufferedImage zero1 = null;
@@ -73,17 +91,17 @@ public final class OCR {
         BufferedImage nine1 = null;
         
         try {
-            period1 = ImageIO.read(new File("base_images/period.BMP"));
-            zero1 = ImageIO.read(new File("base_images/0.BMP"));
-            one1 = ImageIO.read(new File("base_images/1.BMP"));
-            two1 = ImageIO.read(new File("base_images/2.BMP"));
-            three1 = ImageIO.read(new File("base_images/3.BMP"));
-            four1 = ImageIO.read(new File("base_images/4.BMP"));
-            five1 = ImageIO.read(new File("base_images/5.BMP"));
-            six1 = ImageIO.read(new File("base_images/6.BMP"));
-            seven1 = ImageIO.read(new File("base_images/7.BMP"));
-            eight1 = ImageIO.read(new File("base_images/8.BMP"));
-            nine1 = ImageIO.read(new File("base_images/9.BMP"));
+            period1 = ImageIO.read(OCR.class.getResourceAsStream("/period.bmp"));
+            zero1 = ImageIO.read(OCR.class.getResourceAsStream("/0.bmp"));
+            one1 = ImageIO.read(OCR.class.getResourceAsStream("/1.bmp"));
+            two1 = ImageIO.read(OCR.class.getResourceAsStream("/2.bmp"));
+            three1 = ImageIO.read(OCR.class.getResourceAsStream("/3.bmp"));
+            four1 = ImageIO.read(OCR.class.getResourceAsStream("/4.bmp"));
+            five1 = ImageIO.read(OCR.class.getResourceAsStream("/5.bmp"));
+            six1 = ImageIO.read(OCR.class.getResourceAsStream("/6.bmp"));
+            seven1 = ImageIO.read(OCR.class.getResourceAsStream("/7.bmp"));
+            eight1 = ImageIO.read(OCR.class.getResourceAsStream("/8.bmp"));
+            nine1 = ImageIO.read(OCR.class.getResourceAsStream("/9.bmp"));
         } catch (IOException ex) {
             Logger.getLogger(OCR.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -142,17 +160,72 @@ public final class OCR {
         return flat;
     }
     
-    public String print_ocr()
+    /**
+     * TODO delete this after i know things are working
+     * @param t1 my OCR text
+     * @param t2 Sikuli's OCR text
+     */
+    public long debug(String t1, String t2)
+    {
+        if(!t1.contentEquals(t2))
+        {
+            try 
+            {
+                BufferedWriter out;
+                Calendar cal = Calendar.getInstance();
+                int month = cal.get(Calendar.MONTH) + 1;
+                String x = month + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
+                out = new BufferedWriter(new FileWriter("C:\\postgres_backups\\ocr_debug\\" + x + ".txt", true));
+
+                out.write("For " + cal.getTimeInMillis() + ", MY OCR was " + t1 + ", and Sikuli's was " + t2 + ", picture is " + cal.getTimeInMillis() + ".jpg");
+                out.newLine();
+                out.close();
+                
+                return cal.getTimeInMillis();
+            } 
+            catch (IOException ex) 
+            {
+            }
+        }
+        
+        return 0;
+    }
+    
+    public Rectangle getRectangle()
+    {
+        return this.raw_rectangle;
+    }
+    
+    public String getText(Rectangle r)
+    {
+        this.raw_rectangle = r;
+        return this.getText();
+    }
+    
+    public String getText()
     {
         String result = "";
         BufferedImage temp_image;
+        BufferedImage slot = null;
         
-        for(int x=0;x<this.raw_image.getWidth();x++)
+        try {
+            slot = new Robot().createScreenCapture(this.raw_rectangle);
+        } catch (AWTException ex) {
+            Logger.getLogger(OCR.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
+        if(slot == null)
+        {
+            System.out.println("Unable to scrape the rectangle for OCR");
+            System.exit(0);
+        }
+        
+        for(int x=0;x<slot.getWidth();x++)
         {
             //ATTEMPT TO FIND A NINE
-            if(x+this.nine.getWidth() <= this.raw_image.getWidth())
+            if(x+this.nine.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.nine.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.nine.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -173,9 +246,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A EIGHT
-            if(x+this.eight.getWidth() <= this.raw_image.getWidth())
+            if(x+this.eight.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.eight.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.eight.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -196,9 +269,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A SEVEN
-            if(x+this.seven.getWidth() <= this.raw_image.getWidth())
+            if(x+this.seven.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.seven.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.seven.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -219,9 +292,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A SIX
-            if(x+this.six.getWidth() <= this.raw_image.getWidth())
+            if(x+this.six.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.six.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.six.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -242,9 +315,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A FIVE
-            if(x+this.five.getWidth() <= this.raw_image.getWidth())
+            if(x+this.five.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.five.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.five.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -265,9 +338,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A FOUR
-            if(x+this.four.getWidth() <= this.raw_image.getWidth())
+            if(x+this.four.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.four.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.four.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -288,9 +361,9 @@ public final class OCR {
             }
             
             //ATTEMPT TO FIND A THREE
-            if(x+this.three.getWidth() <= this.raw_image.getWidth())
+            if(x+this.three.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.three.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.three.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -311,9 +384,9 @@ public final class OCR {
             }            
             
             //ATTEMPT TO FIND A TWO
-            if(x+this.two.getWidth() <= this.raw_image.getWidth())
+            if(x+this.two.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.two.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.two.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -334,9 +407,9 @@ public final class OCR {
             }          
             
             //ATTEMPT TO FIND A ONE
-            if(x+this.one.getWidth() <= this.raw_image.getWidth())
+            if(x+this.one.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.one.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.one.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -357,9 +430,9 @@ public final class OCR {
             }        
             
             //ATTEMPT TO FIND A ZERO
-            if(x+this.zero.getWidth() <= this.raw_image.getWidth())
+            if(x+this.zero.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.zero.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.zero.getWidth(), slot.getHeight());
                 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -380,9 +453,9 @@ public final class OCR {
             }        
             
             //ATTEMPT TO FIND A PERIOD
-            if(x+this.period.getWidth() <= this.raw_image.getWidth())
+            if(x+this.period.getWidth() <= slot.getWidth())
             {
-                temp_image = this.raw_image.getSubimage(x, 0, this.period.getWidth(), this.raw_image.getHeight());
+                temp_image = slot.getSubimage(x, 0, this.period.getWidth(), slot.getHeight());
 
                 ArrayList cl = this.clean_pixels(this.pixels(temp_image), temp_image.getWidth());
                 
@@ -402,6 +475,7 @@ public final class OCR {
                 }
             }            
         }
+        
         return result;
     }
         

@@ -2,4 +2,3 @@ dist
 build
 build.xml
 log4j*
-/OCR/nbproject/private/
