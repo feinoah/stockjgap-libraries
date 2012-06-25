@@ -55,7 +55,7 @@ public final class OCR {
      */
     public OCR()
     {
-        this(new Rectangle(0, 0, 0, 0));
+        this(new Rectangle(0, 0, 0, 0), "TimesNewRoman", "8");
     }
     
     /**
@@ -67,14 +67,15 @@ public final class OCR {
      */
     public OCR(int x, int y, int width, int height)
     {
-        this(new Rectangle(x, y, width, height));
+        this(new Rectangle(x, y, width, height), "TimesNewRoman", "8");
     }
     
     /**
      * Sent in rectangle is used to scrape from the screen
+     * Font must be "Regular" and not "bold" or anything else with a white background
      * @param r 
      */
-    public OCR(Rectangle r)
+    public OCR(Rectangle r, String font_name, String font_size)
     {
         this.raw_rectangle = r;
         
@@ -90,18 +91,20 @@ public final class OCR {
         BufferedImage eight1 = null;
         BufferedImage nine1 = null;
         
+        String f_path = "/" + font_name + "/" + font_size + "/";
+        
         try {
-            period1 = ImageIO.read(OCR.class.getResourceAsStream("/period.bmp"));
-            zero1 = ImageIO.read(OCR.class.getResourceAsStream("/0.bmp"));
-            one1 = ImageIO.read(OCR.class.getResourceAsStream("/1.bmp"));
-            two1 = ImageIO.read(OCR.class.getResourceAsStream("/2.bmp"));
-            three1 = ImageIO.read(OCR.class.getResourceAsStream("/3.bmp"));
-            four1 = ImageIO.read(OCR.class.getResourceAsStream("/4.bmp"));
-            five1 = ImageIO.read(OCR.class.getResourceAsStream("/5.bmp"));
-            six1 = ImageIO.read(OCR.class.getResourceAsStream("/6.bmp"));
-            seven1 = ImageIO.read(OCR.class.getResourceAsStream("/7.bmp"));
-            eight1 = ImageIO.read(OCR.class.getResourceAsStream("/8.bmp"));
-            nine1 = ImageIO.read(OCR.class.getResourceAsStream("/9.bmp"));
+            period1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "period.bmp"));
+            zero1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "0.bmp"));
+            one1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "1.bmp"));
+            two1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "2.bmp"));
+            three1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "3.bmp"));
+            four1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "4.bmp"));
+            five1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "5.bmp"));
+            six1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "6.bmp"));
+            seven1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "7.bmp"));
+            eight1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "8.bmp"));
+            nine1 = ImageIO.read(OCR.class.getResourceAsStream(f_path + "9.bmp"));
         } catch (IOException ex) {
             Logger.getLogger(OCR.class.getName()).log(Level.SEVERE, null, ex);
         }
