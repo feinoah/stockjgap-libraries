@@ -6,6 +6,7 @@ package postgreswork;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import memcachedlib.MemcachedLib;
@@ -36,7 +37,14 @@ public class PostgresWork {
         }
         
         try {
-            this.conSource = DriverManager.getConnection("jdbc:postgresql://74.77.200.111:6432/stocks_pool?user=testuser&password=testpass");
+            Properties props = new Properties();
+            props.setProperty("user", "bga7vSYu5uSduGvy");
+            props.setProperty("password", "lLTdQ4nG4J1lLHOhzfqh");
+            props.setProperty("protocol", "pgsql");
+            props.setProperty("ssl", "true");
+            //
+            this.conSource = DriverManager.getConnection("jdbc:postgresql://74.77.200.111:6433/stocks_pool", props);
+            
         } catch (SQLException ex) {
             Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);
         }
