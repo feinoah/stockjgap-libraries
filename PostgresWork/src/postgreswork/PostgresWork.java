@@ -40,10 +40,11 @@ public class PostgresWork {
             Properties props = new Properties();
             props.setProperty("user", "bga7vSYu5uSduGvy");
             props.setProperty("password", "lLTdQ4nG4J1lLHOhzfqh");
-            props.setProperty("protocol", "pgsql");
-            props.setProperty("ssl", "true");
-            //
-            this.conSource = DriverManager.getConnection("jdbc:postgresql://74.77.200.111:6433/stocks_pool", props);
+            //props.setProperty("protocol", "pgsql");
+            //props.setProperty("ssl", "true");
+            
+            //6433 should be the stunnel, but i can't get it working.
+            this.conSource = DriverManager.getConnection("jdbc:postgresql://74.77.200.111:6432/stocks_pool", props);
             
         } catch (SQLException ex) {
             Logger.getLogger(PostgresWork.class.getName()).log(Level.SEVERE, null, ex);

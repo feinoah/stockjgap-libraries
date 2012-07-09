@@ -125,7 +125,7 @@ public final class HolidayCheck
         closeCal.set(Calendar.SECOND, 59);
         closeCal.set(Calendar.MILLISECOND, 999);
         
-        return c.compareTo(openCal) >= 0 && c.compareTo(closeCal) <= 0;
+        return (c.compareTo(openCal) >= 0 && c.compareTo(closeCal) <= 0);
     }
 
     public int getHour()
