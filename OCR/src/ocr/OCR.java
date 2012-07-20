@@ -162,38 +162,7 @@ public final class OCR {
         }
         return flat;
     }
-    
-    /**
-     * TODO delete this after i know things are working
-     * @param t1 my OCR text
-     * @param t2 Sikuli's OCR text
-     */
-    public long debug(String t1, String t2)
-    {
-        if(!t1.contentEquals(t2))
-        {
-            try 
-            {
-                BufferedWriter out;
-                Calendar cal = Calendar.getInstance();
-                int month = cal.get(Calendar.MONTH) + 1;
-                String x = month + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + cal.get(Calendar.YEAR);
-                out = new BufferedWriter(new FileWriter("C:\\postgres_backups\\ocr_debug\\" + x + ".txt", true));
 
-                out.write("For " + cal.getTimeInMillis() + ", MY OCR was " + t1 + ", and Sikuli's was " + t2 + ", picture is " + cal.getTimeInMillis() + ".jpg");
-                out.newLine();
-                out.close();
-                
-                return cal.getTimeInMillis();
-            } 
-            catch (IOException ex) 
-            {
-            }
-        }
-        
-        return 0;
-    }
-    
     public Rectangle getRectangle()
     {
         return this.raw_rectangle;
@@ -217,6 +186,9 @@ public final class OCR {
             Logger.getLogger(OCR.class.getName()).log(Level.SEVERE, null, ex);
         }
       
+        this.print_image(this.clean_pixels(this.pixels(slot), slot.getWidth()));
+        System.out.println("");
+        
         if(slot == null)
         {
             System.out.println("Unable to scrape the rectangle for OCR");

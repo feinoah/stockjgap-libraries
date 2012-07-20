@@ -2,3 +2,4 @@ dist
 build
 build.xml
 log4j*
+/GraphicEventObserver/nbproject/private/
