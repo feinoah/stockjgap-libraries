@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
  * OCR takes in a rectangle to scrape numbers off of
  * @author me
  */
-public class OCR {    
+public final class OCR {    
     private static String getPath()
     {
         //WINDOWS
