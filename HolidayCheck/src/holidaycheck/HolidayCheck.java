@@ -44,6 +44,14 @@ public final class HolidayCheck
         return isHolidayCheck(getCalInstance());
     }
 
+    /**
+     * Returns "0" on normal hours (9:30 - 16:00)
+     * Returns "1" on closings
+     * Returns "2" on early closings (9:30 - 13:00)
+     * 
+     * @param c
+     * @return 
+     */
     public String isHolidayCheck(Calendar c)
     {
         int year = c.get(Calendar.YEAR);
