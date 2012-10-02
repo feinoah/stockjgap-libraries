@@ -21,6 +21,14 @@
                 <id>jar</id>
             </reference>
             <reference>
+                <foreign-project>OneVariableExecutor</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
                 <foreign-project>PostgresWork</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
@@ -29,7 +37,31 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>StockGP</foreign-project>
+                <foreign-project>StockGPFunctions</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>StockGPProblems</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>TimeConstraints</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>TwoVariableExecutor</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

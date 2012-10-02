@@ -587,6 +587,13 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.OneVariableExecutor}" name="call.subproject"/>
+            <param location="${project.OneVariableExecutor}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
             <param location="${project.PostgresWork}" name="call.subproject"/>
             <param location="${project.PostgresWork}/build.xml" name="call.script"/>
             <param name="call.target" value="jar"/>
@@ -594,8 +601,29 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-jar.properties}"/>
-            <param location="${project.StockGP}" name="call.subproject"/>
-            <param location="${project.StockGP}/build.xml" name="call.script"/>
+            <param location="${project.StockGPFunctions}" name="call.subproject"/>
+            <param location="${project.StockGPFunctions}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.StockGPProblems}" name="call.subproject"/>
+            <param location="${project.StockGPProblems}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.TimeConstraints}" name="call.subproject"/>
+            <param location="${project.TimeConstraints}/build.xml" name="call.script"/>
+            <param name="call.target" value="jar"/>
+            <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-jar.properties}"/>
+            <param location="${project.TwoVariableExecutor}" name="call.subproject"/>
+            <param location="${project.TwoVariableExecutor}/build.xml" name="call.script"/>
             <param name="call.target" value="jar"/>
             <param name="transfer.built-jar.properties" value="${built-jar.properties}"/>
         </antcall>
@@ -1054,6 +1082,13 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.OneVariableExecutor}" name="call.subproject"/>
+            <param location="${project.OneVariableExecutor}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
             <param location="${project.PostgresWork}" name="call.subproject"/>
             <param location="${project.PostgresWork}/build.xml" name="call.script"/>
             <param name="call.target" value="clean"/>
@@ -1061,8 +1096,29 @@ is divided into following sections:
         </antcall>
         <antcall target="-maybe-call-dep">
             <param name="call.built.properties" value="${built-clean.properties}"/>
-            <param location="${project.StockGP}" name="call.subproject"/>
-            <param location="${project.StockGP}/build.xml" name="call.script"/>
+            <param location="${project.StockGPFunctions}" name="call.subproject"/>
+            <param location="${project.StockGPFunctions}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.StockGPProblems}" name="call.subproject"/>
+            <param location="${project.StockGPProblems}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.TimeConstraints}" name="call.subproject"/>
+            <param location="${project.TimeConstraints}/build.xml" name="call.script"/>
+            <param name="call.target" value="clean"/>
+            <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
+        </antcall>
+        <antcall target="-maybe-call-dep">
+            <param name="call.built.properties" value="${built-clean.properties}"/>
+            <param location="${project.TwoVariableExecutor}" name="call.subproject"/>
+            <param location="${project.TwoVariableExecutor}/build.xml" name="call.script"/>
             <param name="call.target" value="clean"/>
             <param name="transfer.built-clean.properties" value="${built-clean.properties}"/>
         </antcall>
